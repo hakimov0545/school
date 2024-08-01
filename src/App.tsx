@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { createTheme } from "@mui/material";
+import React, { useEffect } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import Auth, { UserProvider, useUser } from "./components/auth";
+import ProtectedComponent from "./components/protected";
+import {
+	BrowserRouter as Router,
+	Route,
+	Routes,
+} from "react-router-dom";
+import { getUser } from "./components/Api";
+
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#3700b3",
+		},
+	},
+});
+
+export const RouteContext = React.createContext({
+	activePage: "Dashboard",
+	setActivePage: (value: string) => {},
+});
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const { user, setUser } = useUser();
+
+	return (
+		<ThemeProvider theme={theme}>
+			<UserProvider>
+				<Router>
+					<Routes>
+						<Route
+							path="/pro"
+							element={<ProtectedComponent />}
+						/>
+						<Route path="/" element={<Auth />} />
+					</Routes>
+				</Router>
+			</UserProvider>
+		</ThemeProvider>
+	);
 }
 
 export default App;
